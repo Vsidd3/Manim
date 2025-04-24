@@ -1,0 +1,102 @@
+class BinaryToHex(Scene):
+    def construct(self):
+
+
+
+
+
+        logoc1=Circle(radius=2.05, color=WHITE, fill_opacity=1)
+        cb_text=Text("CB", font_size=80).move_to(logoc1)
+        logoc2=Circle(radius=1.95,color=BLACK, fill_opacity=1).move_to(logoc1, RIGHT)
+        self.play(DrawBorderThenFill(logoc1), Create(logoc2), Write(cb_text), run_time=4)
+        codebyte_text=Text("CodeByte", font_size=65).next_to(logoc1, DOWN)
+        self.play(Write(codebyte_text), run_time=1)
+        self.wait(1.2)
+
+            # Fade out the circle and texts
+        self.play(FadeOut(logoc1), FadeOut(logoc2), FadeOut(cb_text))
+
+        self.play(codebyte_text.animate.scale(0.3).to_edge(DR))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        title=Text('Binary to Hexadecimal', color=RED, weight=BOLD)
+        self.play(Write(title))
+        self.play(title.animate.to_edge(UP))
+        self.wait()
+        bin=Text('10110111', font_size=90)
+        self.play(Write(bin))
+        t0=Text('Split the number in groups of 4 from right', font_size=30).next_to(title, DOWN)
+        self.play(Write(t0))
+        self.wait(2)
+        self.play(bin[0:4].animate.shift(LEFT), bin[4:].animate.shift(RIGHT))
+        
+        r1=SurroundingRectangle(bin[0:4], color=BLUE)
+        r2=SurroundingRectangle(bin[4:], color=BLUE)
+        self.play(Create(r1), Create(r2))
+
+        l=[1,2,4,8]
+        d1=Group()
+        d2=Group()
+
+        for i in l:
+            d=Text(f'{i}', color=YELLOW, font_size=38).next_to(bin[-(l.index(i)+1)], DOWN*2)
+            self.play(Write(d), run_time=0.5)
+            d1.add(d)
+
+        for i in l:
+            d=Text(f'{i}', color=YELLOW, font_size=38).next_to(bin[-(l.index(i)+1)-4], DOWN*2)
+            self.play(Write(d), run_time=0.5)
+            d2.add(d)
+        
+        self.wait(2)
+        t=Text('We remove all numbers that come below a zero', font_size=30).to_edge(DOWN)
+        self.play(Write(t))
+        self.wait()
+        self.play(FadeOut(d1[3], d2[2]))
+        self.wait()
+        #s1=MathTex(r'sum(4,2,1)', stroke_width=1.2, color=WHITE).next_to()
+        self.play(Group(d1[0],d1[1], d1[2]).animate.arrange(LEFT, buff=0.8).next_to(r2, DOWN), Group(d2[0],d2[1], d2[3]).animate.arrange(LEFT, buff=0.8).next_to(r1, DOWN))
+        self.wait()
+        plus=Text('+', font_size=38)
+        plusg=Group(plus)
+        for i in range(3):
+            p=plus.copy()
+            plusg.add(p)
+        self.play(FadeIn(plusg[0].next_to(d1[1], RIGHT*0.6)), FadeIn(plusg[1].next_to(d1[2], RIGHT*0.6)), FadeIn(plusg[2].next_to(d2[1], RIGHT*0.6)), FadeIn(plusg[3].next_to(d2[3], RIGHT*0.6)))
+        
+        s1=Text('=11', font_size=38).next_to(r1, DOWN).shift(DOWN)
+        s2=Text('=7', font_size=38).next_to(r2, DOWN).shift(DOWN)
+        self.play(FadeIn(s1))
+        self.wait(0.5)
+        self.play(FadeIn(s2))
+
+        self.wait()
+
+        s3=Text('=B', font_size=38).next_to(s1, DOWN)
+        s4=Text('=7', font_size=38).next_to(s2, DOWN)
+        self.play(FadeIn(s3,s4))
+        self.wait(2)
+        self.play(FadeOut(d1[0],d1[1], d1[2],d2[0],d2[1], d2[3], plusg,s1,s2, s4[0]), Uncreate(r1), Uncreate(r2))
+        
+        s4=s4[1]
+        g=Group(s3,s4)
+        self.play(bin[4:].animate.shift(LEFT*2), g.animate.scale(2).arrange(RIGHT, buff=0.2).next_to(bin, RIGHT, buff=0.2).set_color(YELLOW).shift(LEFT))
+
+        
+        self.wait(5)
