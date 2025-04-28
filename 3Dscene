@@ -1,0 +1,55 @@
+import numpy as np
+
+# Define the data points
+x_data = np.array([1, 2, 3, 5, 6, 8, 9])
+y_data = np.array([11, 23, 28, 57, 60, 81, 89])
+
+# Define the cost function
+def cost_function(m, b):
+    predictions = m * x_data + b
+    return np.mean((predictions - y_data) ** 2)
+
+# Create a mesh grid for m and b
+m_values = np.linspace(0, 15, 50)
+b_values = np.linspace(0, 15, 50)
+m_grid, b_grid = np.meshgrid(m_values, b_values)
+
+# Compute the cost for each combination of m and b
+cost_values = np.array([[cost_function(m, b) for m, b in zip(m_row, b_row)] 
+                        for m_row, b_row in zip(m_grid, b_grid)])
+
+class CostFunctionSurface(ThreeDScene):
+    def construct(self):
+        # Set up axes
+        axes = ThreeDAxes(
+            x_range=[0, 15, 5],
+            y_range=[0, 15, 5],
+            z_range=[0, max(cost_values.flatten()), 10],
+            x_length=7,
+            y_length=7,
+            z_length=5,
+        )
+        
+        axes_labels = axes.get_axis_labels(x_label=Tex("m"), y_label=Tex("b"), z_label=Tex("Cost"))
+
+        # Create a surface plot
+        surface = Surface(
+            lambda u, v: axes.c2p(
+                u, v, cost_function(u, v)
+            ),
+            u_range=[0, 15],
+            v_range=[0, 15],
+            resolution=(50, 50),
+            fill_opacity=0.8,
+            checkerboard_colors=[BLUE_B, BLUE_D]
+        )
+
+        # Add the surface and axes to the scene
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-45 * DEGREES)
+        self.add(axes, axes_labels, surface)
+
+        # Rotate the camera to showcase the surface
+        self.play(Create(surface))
+        self.begin_ambient_camera_rotation(rate=0.2)
+        self.wait(10)
+        self.stop_ambient_camera_rotation()
